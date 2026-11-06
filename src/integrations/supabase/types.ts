@@ -14,16 +14,223 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      apartamentos: {
+        Row: {
+          bloco: string
+          criado_em: string
+          id: string
+          numero: string
+        }
+        Insert: {
+          bloco: string
+          criado_em?: string
+          id?: string
+          numero: string
+        }
+        Update: {
+          bloco?: string
+          criado_em?: string
+          id?: string
+          numero?: string
+        }
+        Relationships: []
+      }
+      moradores: {
+        Row: {
+          apartamento_id: string
+          atualizado_em: string
+          cpf: string
+          criado_em: string
+          id: string
+          nome: string
+          status: Database["public"]["Enums"]["status_morador"]
+          telefone: string | null
+          tipo_morador: Database["public"]["Enums"]["tipo_morador"]
+        }
+        Insert: {
+          apartamento_id: string
+          atualizado_em?: string
+          cpf: string
+          criado_em?: string
+          id?: string
+          nome: string
+          status?: Database["public"]["Enums"]["status_morador"]
+          telefone?: string | null
+          tipo_morador?: Database["public"]["Enums"]["tipo_morador"]
+        }
+        Update: {
+          apartamento_id?: string
+          atualizado_em?: string
+          cpf?: string
+          criado_em?: string
+          id?: string
+          nome?: string
+          status?: Database["public"]["Enums"]["status_morador"]
+          telefone?: string | null
+          tipo_morador?: Database["public"]["Enums"]["tipo_morador"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moradores_apartamento_id_fkey"
+            columns: ["apartamento_id"]
+            isOneToOne: false
+            referencedRelation: "apartamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      perfis: {
+        Row: {
+          criado_em: string
+          email: string | null
+          papel: Database["public"]["Enums"]["papel_usuario"] | null
+          user_id: string
+        }
+        Insert: {
+          criado_em?: string
+          email?: string | null
+          papel?: Database["public"]["Enums"]["papel_usuario"] | null
+          user_id: string
+        }
+        Update: {
+          criado_em?: string
+          email?: string | null
+          papel?: Database["public"]["Enums"]["papel_usuario"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      registros_acesso: {
+        Row: {
+          apartamento_destino_id: string | null
+          data_hora: string
+          documento_visitante: string | null
+          id: string
+          morador_id: string | null
+          nome_visitante: string | null
+          observacao: string | null
+          registrado_por: string | null
+          tipo_fluxo: Database["public"]["Enums"]["tipo_fluxo"]
+          tipo_pessoa: Database["public"]["Enums"]["tipo_pessoa"]
+        }
+        Insert: {
+          apartamento_destino_id?: string | null
+          data_hora?: string
+          documento_visitante?: string | null
+          id?: string
+          morador_id?: string | null
+          nome_visitante?: string | null
+          observacao?: string | null
+          registrado_por?: string | null
+          tipo_fluxo: Database["public"]["Enums"]["tipo_fluxo"]
+          tipo_pessoa: Database["public"]["Enums"]["tipo_pessoa"]
+        }
+        Update: {
+          apartamento_destino_id?: string | null
+          data_hora?: string
+          documento_visitante?: string | null
+          id?: string
+          morador_id?: string | null
+          nome_visitante?: string | null
+          observacao?: string | null
+          registrado_por?: string | null
+          tipo_fluxo?: Database["public"]["Enums"]["tipo_fluxo"]
+          tipo_pessoa?: Database["public"]["Enums"]["tipo_pessoa"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registros_acesso_apartamento_destino_id_fkey"
+            columns: ["apartamento_destino_id"]
+            isOneToOne: false
+            referencedRelation: "apartamentos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "registros_acesso_morador_id_fkey"
+            columns: ["morador_id"]
+            isOneToOne: false
+            referencedRelation: "estado_moradores"
+            referencedColumns: ["morador_id"]
+          },
+          {
+            foreignKeyName: "registros_acesso_morador_id_fkey"
+            columns: ["morador_id"]
+            isOneToOne: false
+            referencedRelation: "moradores"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
-      [_ in never]: never
+      estado_moradores: {
+        Row: {
+          apartamento_id: string | null
+          bloco: string | null
+          cpf: string | null
+          estado: string | null
+          morador_id: string | null
+          nome: string | null
+          numero: string | null
+          status: Database["public"]["Enums"]["status_morador"] | null
+          ultimo_registro: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moradores_apartamento_id_fkey"
+            columns: ["apartamento_id"]
+            isOneToOne: false
+            referencedRelation: "apartamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      visitantes_dentro: {
+        Row: {
+          apartamento_destino_id: string | null
+          documento_visitante: string | null
+          entrada_em: string | null
+          nome_visitante: string | null
+          observacao: string | null
+          tipo_fluxo: Database["public"]["Enums"]["tipo_fluxo"] | null
+          tipo_pessoa: Database["public"]["Enums"]["tipo_pessoa"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registros_acesso_apartamento_destino_id_fkey"
+            columns: ["apartamento_destino_id"]
+            isOneToOne: false
+            referencedRelation: "apartamentos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
-      [_ in never]: never
+      papel_atual: {
+        Args: never
+        Returns: Database["public"]["Enums"]["papel_usuario"]
+      }
+      registrar_acesso: {
+        Args: {
+          p_apartamento_destino_id?: string
+          p_confirmar_excecao?: boolean
+          p_documento_visitante?: string
+          p_morador_id?: string
+          p_nome_visitante?: string
+          p_observacao?: string
+          p_tipo_fluxo?: Database["public"]["Enums"]["tipo_fluxo"]
+          p_tipo_pessoa: Database["public"]["Enums"]["tipo_pessoa"]
+        }
+        Returns: Json
+      }
     }
     Enums: {
-      [_ in never]: never
+      papel_usuario: "PORTEIRO" | "SINDICO"
+      status_morador: "ATIVO" | "INATIVO" | "BLOQUEADO"
+      tipo_fluxo: "ENTRADA" | "SAIDA"
+      tipo_morador: "PROPRIETARIO" | "INQUILINO" | "DEPENDENTE"
+      tipo_pessoa: "MORADOR" | "VISITANTE" | "PRESTADOR"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +357,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      papel_usuario: ["PORTEIRO", "SINDICO"],
+      status_morador: ["ATIVO", "INATIVO", "BLOQUEADO"],
+      tipo_fluxo: ["ENTRADA", "SAIDA"],
+      tipo_morador: ["PROPRIETARIO", "INQUILINO", "DEPENDENTE"],
+      tipo_pessoa: ["MORADOR", "VISITANTE", "PRESTADOR"],
+    },
   },
 } as const

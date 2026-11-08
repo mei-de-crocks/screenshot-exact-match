@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedPortariaRouteImport } from './routes/_authenticated/portaria'
+import { Route as AuthenticatedSindicoRouteImport } from './routes/_authenticated/sindico'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,16 +34,23 @@ const AuthenticatedPortariaRoute = AuthenticatedPortariaRouteImport.update({
   path: '/portaria',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSindicoRoute = AuthenticatedSindicoRouteImport.update({
+  id: '/sindico',
+  path: '/sindico',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/portaria': typeof AuthenticatedPortariaRoute
+  '/sindico': typeof AuthenticatedSindicoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/portaria': typeof AuthenticatedPortariaRoute
+  '/sindico': typeof AuthenticatedSindicoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -50,14 +58,20 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/portaria': typeof AuthenticatedPortariaRoute
+  '/_authenticated/sindico': typeof AuthenticatedSindicoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/portaria'
+  fullPaths: '/' | '/auth' | '/portaria' | '/sindico'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/portaria'
+  to: '/' | '/auth' | '/portaria' | '/sindico'
   id:
-    '__root__' | '/' | '/_authenticated' | '/auth' | '/_authenticated/portaria'
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/portaria'
+    | '/_authenticated/sindico'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,15 +110,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPortariaRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/sindico': {
+      id: '/_authenticated/sindico'
+      path: '/sindico'
+      fullPath: '/sindico'
+      preLoaderRoute: typeof AuthenticatedSindicoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortariaRoute: typeof AuthenticatedPortariaRoute
+  AuthenticatedSindicoRoute: typeof AuthenticatedSindicoRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPortariaRoute: AuthenticatedPortariaRoute,
+  AuthenticatedSindicoRoute: AuthenticatedSindicoRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

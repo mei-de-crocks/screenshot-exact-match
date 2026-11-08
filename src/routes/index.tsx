@@ -6,13 +6,13 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Portaria Condominial" },
+      { title: "Condômino Control – Portaria" },
       {
         name: "description",
         content:
           "Sistema de controle de acesso da portaria: registro de entrada e saída de moradores, visitantes e prestadores.",
       },
-      { property: "og:title", content: "Portaria Condominial" },
+      { property: "og:title", content: "Condômino Control – Portaria" },
       {
         property: "og:description",
         content: "Controle de acesso da portaria: entradas e saídas de moradores, visitantes e prestadores.",

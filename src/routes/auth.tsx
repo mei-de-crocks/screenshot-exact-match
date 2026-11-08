@@ -11,9 +11,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar — Portaria Condominial" },
+      { title: "Entrar — Condômino Control – Portaria" },
       { name: "description", content: "Acesse o painel da portaria com seu e-mail e senha." },
-      { property: "og:title", content: "Entrar — Portaria Condominial" },
+      { property: "og:title", content: "Entrar — Condômino Control – Portaria" },
       { property: "og:description", content: "Acesse o painel da portaria com seu e-mail e senha." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -117,7 +117,7 @@ function AuthPage() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <ShieldCheck className="h-6 w-6 text-primary" />
           </div>
-          <CardTitle className="text-2xl">Portaria Condominial</CardTitle>
+          <CardTitle className="text-2xl">Condômino Control – Portaria</CardTitle>
           <CardDescription>
             {modo === "entrar"
               ? "Entre com seu e-mail e senha para acessar o painel."

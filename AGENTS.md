@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## App architecture
+- Use the existing authenticated Supabase browser client and existing policies for condominium data; never use privileged credentials for ordinary UI reads or writes.
+- Keep syndic management tabs in `src/components/sindico` with their own guarded route; the portaria stays independent.
+- Validate CPF checksums only for new or changed CPFs, using the shared validation module, so legacy example residents remain editable.
+- Record access only through the existing `registrar_acesso` RPC; do not change its schema or policies.

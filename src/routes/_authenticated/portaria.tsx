@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { format } from "date-fns";
@@ -42,8 +42,12 @@ import {
 export const Route = createFileRoute("/_authenticated/portaria")({
   head: () => ({
     meta: [
-      { title: "Painel da Portaria — Portaria Condominial" },
+      { title: "Painel da Portaria — Condômino Control – Portaria" },
       { name: "description", content: "Registre entradas e saídas de moradores, visitantes e prestadores." },
+      { property: "og:title", content: "Painel da Portaria — Condômino Control – Portaria" },
+      { property: "og:description", content: "Registre entradas e saídas de moradores, visitantes e prestadores." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: PortariaPage,
@@ -111,10 +115,11 @@ function PortariaPage() {
     queryKey: ["perfil", usuario?.id],
     enabled: !!usuario,
     queryFn: async () => {
+      if (!usuario) return null;
       const { data, error } = await supabase
         .from("perfis")
         .select("*")
-        .eq("user_id", usuario!.id)
+        .eq("user_id", usuario.id)
         .maybeSingle();
       if (error) throw error;
       return data;
@@ -236,12 +241,12 @@ function PortariaPage() {
       const { data, error } = await supabase.rpc("registrar_acesso", payload);
       if (error) {
         toast.error(error.message || "Não foi possível registrar. Tente novamente.");
-        return;
+        return false;
       }
       const r = data as { sucesso?: boolean; inconsistencia?: boolean; mensagem?: string } | null;
       if (r?.inconsistencia) {
         setExcecao({ mensagem: r.mensagem ?? "Inconsistência detectada.", payload });
-        return;
+        return false;
       }
       if (r?.sucesso) {
         toast.success(
@@ -252,7 +257,9 @@ function PortariaPage() {
         setTermoBusca("");
         await Promise.all([refetchEstados(), refetchRegistros(), refetchVisitantes()]);
         inputBuscaRef.current?.focus();
+        return true;
       }
+      return false;
     } finally {
       setRegistrando(false);
     }
@@ -297,8 +304,9 @@ function PortariaPage() {
       p_documento_visitante: vDocumento.trim(),
       p_apartamento_destino_id: vApartamento,
       p_tipo_fluxo: "ENTRADA",
-      p_observacao: vObservacao.trim() || undefined,
-    }).then(() => {
+      ...(vObservacao.trim() ? {p_observacao: vObservacao.trim()} : {}),
+    }).then((sucesso) => {
+      if (!sucesso) return;
       setVNome("");
       setVDocumento("");
       setVApartamento("");
@@ -313,7 +321,7 @@ function PortariaPage() {
       p_tipo_pessoa: (v.tipo_pessoa as "VISITANTE" | "PRESTADOR") ?? "VISITANTE",
       p_nome_visitante: v.nome_visitante,
       p_documento_visitante: v.documento_visitante,
-      p_apartamento_destino_id: v.apartamento_destino_id ?? undefined,
+      ...(v.apartamento_destino_id ? {p_apartamento_destino_id: v.apartamento_destino_id} : {}),
       p_tipo_fluxo: "SAIDA",
     });
   }
@@ -341,7 +349,7 @@ function PortariaPage() {
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-3">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" />
-            <span className="text-lg font-semibold">Portaria Condominial</span>
+            <span className="text-lg font-semibold">Condômino Control – Portaria</span>
           </div>
           <div className="ml-auto flex items-center gap-3">
             {perfil && (
@@ -352,6 +360,7 @@ function PortariaPage() {
                 )}
               </div>
             )}
+            {papel === "SINDICO" && <Button variant="outline" size="sm" asChild><Link to="/sindico">Área do síndico</Link></Button>}
             <Button variant="outline" size="sm" onClick={sair}>
               <LogOut className="mr-2 h-4 w-4" />
               Sair
